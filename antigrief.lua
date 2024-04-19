@@ -293,6 +293,12 @@ local function on_built_entity(event)
     if not this.enabled then
         return
     end
+
+    local entity = event.created_entity
+    if not (entity and entity.valid) then
+        return
+    end
+
     local tracker = session.get_session_table()
     local trusted = session.get_trusted_table()
     if event.created_entity.type == 'entity-ghost' then

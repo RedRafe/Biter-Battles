@@ -3,6 +3,7 @@
 local Tables = require "maps.biter_battles_v2.tables"
 local food_values = Tables.food_values
 local food_long_and_short = Tables.food_long_and_short
+local K2 = require 'compatibility.krastorio2'.feed_values_tab
 
 local function get_science_text(food_name, food_short_name)
     return table.concat({"[img=item/", food_name, "][color=",food_values[food_name].color, "]", food_short_name, "[/color]"})
@@ -11,10 +12,10 @@ end
 local debug = false
 
 local raw_costs = {
-    ["iron-ore"] = {cost = 10, crafting_time = 2, icon = "[item=iron-ore]"},
-    ["copper-ore"] = {cost = 10, crafting_time = 2, icon = "[item=copper-ore]"},
-    ["stone"] = {cost = 10, crafting_time = 2, icon = "[item=stone]"},
-    ["coal"] = {cost = 10, crafting_time = 2, icon = "[item=coal]"},
+    ["iron-ore"]    = {cost = 10, crafting_time = 2, icon = "[item=iron-ore]"},
+    ["copper-ore"]  = {cost = 10, crafting_time = 2, icon = "[item=copper-ore]"},
+    ["stone"]       = {cost = 10, crafting_time = 2, icon = "[item=stone]"},
+    ["coal"]        = {cost = 10, crafting_time = 2, icon = "[item=coal]"},
 
     -- I am making uranium cost more, both because of the sulfuric acid, and
     -- because the mining time is longer and the patches are rare.
@@ -32,9 +33,10 @@ local raw_costs = {
     -- pumpjacks, 8 refineries + 9 chem plants doing cracking) as cost
     -- equivalent to 2 lanes of ore (30 miners, 48 steel furnaces).
     -- So that is 150 oil/sec == 30 ore/sec.
-    ["crude-oil"] = {cost = 2, crafting_time = 0.1/0.8, icon = "[fluid=crude-oil]"},
-    ["water"] = {cost = 0, crafting_time = 1/1200, icon = "[fluid=water]"},
+    ["crude-oil"]   = {cost = 2, crafting_time = 0.1/0.8, icon = "[fluid=crude-oil]"},
+    ["water"]       = {cost = 0, crafting_time = 1/1200, icon = "[fluid=water]"},
 }
+K2.raw_costs(raw_costs)
 
 local raw_cost_display_order = {
     "iron-ore",
@@ -46,6 +48,7 @@ local raw_cost_display_order = {
     -- We intentionally exclude "water" because it is very inaccurate due
     -- to not really properly estimating oil cracking
 }
+K2.raw_cost_display_order(raw_cost_display_order)
 
 local recipe_productivity = {
     ["rocket-part"] = 1.4,
@@ -54,6 +57,7 @@ local recipe_productivity = {
     ["production-science-pack"] = 1.08,
     ["utility-science-pack"] = 1.08,
 }
+K2.recipe_productivity(recipe_productivity)
 
 ---@class ProductInfo
 ---@field raw_ingredients table<string, number>
@@ -183,7 +187,7 @@ function get_product_info_uncached(product, recipes, cache)
         info = scale_product_info(info, 1 / productivity)
     end
     info.total_crafting_time = info.total_crafting_time + recipe.energy / crafting_speed
-    if recipe.products[1].amount ~= 1 then
+    if recipe.products[1].amount and recipe.products[1].amount ~= 1 then
         info = scale_product_info(info, 1 / recipe.products[1].amount)
     end
     if debug then
@@ -198,12 +202,6 @@ local function find_costs(food_names)
     local force = game.forces["spectator"]
     local recipes = force.recipes
     local simple_recipes = {}
-    for _, recipe in pairs(recipes) do
-        local products = recipe.products
-        if #products == 1 and products[1].name == recipe.name then
-            simple_recipes[recipe.name] = recipe
-        end
-    end
     simple_recipes["space-science-pack"] = {
         ingredients = {{name = "rocket-part", amount = 100}, {name = "satellite", amount = 1}},
         products = {{name = "space-science-pack", amount = 1000}},
@@ -214,8 +212,17 @@ local function find_costs(food_names)
         products = {{name = "rocket-part", amount = 1}},
         energy = 3  -- Time to craft one rocket part
     }
+    K2.simple_recipes(simple_recipes)
+    for _, recipe in pairs(recipes) do
+        local products = recipe.products
+        if #products == 1 and products[1].name == recipe.name then
+            simple_recipes[recipe.name] = recipe
+        end
+    end
+    
     local result = {}
     local cache = initial_product_infos()
+    K2.cache(cache)
     for food_name, _ in pairs(food_names) do
         result[food_name] = get_product_info(food_name, simple_recipes, cache)
     end

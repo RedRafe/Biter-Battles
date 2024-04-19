@@ -30,13 +30,13 @@ Public.upgrade_modifiers = {
 }
 
 Public.food_values = {
-	["automation-science-pack"] =		{value = 0.0009, name = "automation science", color = "255, 50, 50"},
-	["logistic-science-pack"] =		{value = 0.0023, name = "logistic science", color = "50, 255, 50"},
-	["military-science-pack"] =		{value = 0.0095, name = "military science", color = "105, 105, 105"},
-	["chemical-science-pack"] = 		{value = 0.0250, name = "chemical science", color = "100, 200, 255"},
-	["production-science-pack"] =		{value = 0.1050, name = "production science", color = "150, 25, 255"},
-	["utility-science-pack"] =		{value = 0.1600, name = "utility science", color = "210, 210, 60"},
-	["space-science-pack"] = 		{value = 0.5000, name = "space science", color = "255, 255, 255"},
+	["automation-science-pack"] = {value = 0.0009, name = "automation science", color = "255,  50,  50"},
+	["logistic-science-pack"]   =	{value = 0.0023, name = "logistic science",   color = " 50, 255,  50"},
+	["military-science-pack"]   =	{value = 0.0095, name = "military science",   color = "105, 105, 105"},
+	["chemical-science-pack"]   = {value = 0.0250, name = "chemical science",   color = "100, 200, 255"},
+	["production-science-pack"] =	{value = 0.1050, name = "production science", color = "150,  25, 255"},
+	["utility-science-pack"]    = {value = 0.1600, name = "utility science",    color = "210, 210,  60"},
+	["space-science-pack"]      = {value = 0.5000, name = "space science",      color = "255, 255, 255"},
 }
 
 Public.gui_foods = {}
@@ -72,7 +72,40 @@ Public.food_names = {
 	["chemical-science-pack"] = true,
 	["production-science-pack"] = true,
 	["utility-science-pack"] = true,
-	["space-science-pack"] = true
+	["space-science-pack"] = true,
+}
+
+Public.food_synonyms = {
+	["red"] = "automation-science-pack",
+	["automation"] = "automation-science-pack",
+	["automation-science-pack"] = "automation-science-pack",
+
+	["green"] = "logistic-science-pack",
+	["logistic"] = "logistic-science-pack",
+	["logistics"] = "logistic-science-pack",
+	["logistic-science-pack"] = "logistic-science-pack",
+
+	["grey"] = "military-science-pack",
+	["gray"] = "military-science-pack",
+	["black"] = "military-science-pack",
+	["military"] = "military-science-pack",
+	["military-science-pack"] = "military-science-pack",
+
+	["blue"] = "chemical-science-pack",
+	["chemical"] = "chemical-science-pack",
+	["chemical-science-pack"] = "chemical-science-pack",
+
+	["purple"] = "production-science-pack",
+	["production"] = "production-science-pack",
+	["production-science-pack"] = "production-science-pack",
+
+	["yellow"] = "utility-science-pack",
+	["utility"] = "utility-science-pack",
+	["utility-science-pack"] = "utility-science-pack",
+
+	["white"] = "space-science-pack",
+	["space"] = "space-science-pack",
+	["space-science-pack"] = "space-science-pack",
 }
 
 Public.food_long_and_short = {
@@ -138,18 +171,41 @@ Public.spawn_ore = {
 
 Public.difficulties = {
 	
-	[1] = {name = "I'm Too Young to Die", str = "25%", value = 0.25, color = {r=0.00, g=0.45, b=0.00}, print_color = {r=0.00, g=0.9, b=0.00}},
-	[2] = {name = "Piece of Cake", str = "50%", value = 0.5, color = {r=0.00, g=0.35, b=0.00}, print_color = {r=0.00, g=0.7, b=0.00}},
-	[3] = {name = "Easy", str = "75%", value = 0.75, color = {r=0.00, g=0.25, b=0.00}, print_color = {r=0.00, g=0.5, b=0.00}},
-	[4] = {name = "Normal", str = "100%", value = 1, color = {r=0.00, g=0.00, b=0.25}, print_color = {r=0.0, g=0.0, b=0.7}},
-	[5] = {name = "Hard", str = "150%", value = 1.5, color = {r=0.25, g=0.00, b=0.00}, print_color = {r=0.5, g=0.0, b=0.00}},
-	[6] = {name = "Nightmare", str = "300%", value = 3, color = {r=0.35, g=0.00, b=0.00}, print_color = {r=0.7, g=0.0, b=0.00}},
-	[7] = {name = "Fun and Fast", str = "500%", value = 5, color = {r=0.55, g=0.00, b=0.00}, print_color = {r=0.9, g=0.0, b=0.00}}
+	[1] = {name = "I'm Too Young to Die", str =  "25%", value = 0.25, color = {r=0.00, g=0.45, b=0.00}, print_color = {r=0.00, g=0.90, b=0.00}},
+	[2] = {name = "Piece of Cake",        str =  "50%", value = 0.50, color = {r=0.00, g=0.35, b=0.00}, print_color = {r=0.00, g=0.70, b=0.00}},
+	[3] = {name = "Easy",                 str =  "75%", value = 0.75, color = {r=0.00, g=0.25, b=0.00}, print_color = {r=0.00, g=0.50, b=0.00}},
+	[4] = {name = "Normal",               str = "100%", value = 1.00, color = {r=0.00, g=0.00, b=0.25}, print_color = {r=0.00, g=0.00, b=0.70}},
+	[5] = {name = "Hard",                 str = "150%", value = 1.50, color = {r=0.25, g=0.00, b=0.00}, print_color = {r=0.50, g=0.00, b=0.00}},
+	[6] = {name = "Nightmare",            str = "300%", value = 3.00, color = {r=0.35, g=0.00, b=0.00}, print_color = {r=0.70, g=0.00, b=0.00}},
+	[7] = {name = "Fun and Fast",         str = "500%", value = 5.00, color = {r=0.55, g=0.00, b=0.00}, print_color = {r=0.90, g=0.00, b=0.00}}
 }
 
 Public.forces_list = { "all teams", "north", "south" }
-Public.science_list = { "all science", "very high tier (space, utility, production)", "high tier (space, utility, production, chemical)", "mid+ tier (space, utility, production, chemical, military)","space","utility","production","chemical","military", "logistic", "automation" }
+Public.science_list = {
+	"all science",
+	"very high tier (space, utility, production)",
+	"high tier (space, utility, production, chemical)",
+	"mid+ tier (space, utility, production, chemical, military)",
+	"space",
+	"utility",
+	"production",
+	"chemical",
+	"military",
+	"logistic",
+	"automation"
+}
 Public.evofilter_list = { "all evo jump", "no 0 evo jump", "10+ only","5+ only","4+ only","3+ only","2+ only","1+ only" }
-Public.food_value_table_version = { Public.food_values["automation-science-pack"].value, Public.food_values["logistic-science-pack"].value, Public.food_values["military-science-pack"].value, Public.food_values["chemical-science-pack"].value, Public.food_values["production-science-pack"].value, Public.food_values["utility-science-pack"].value, Public.food_values["space-science-pack"].value}
+
+Public.food_value_table_version = {
+	Public.food_values["automation-science-pack"].value,
+	Public.food_values["logistic-science-pack"].value,
+	Public.food_values["military-science-pack"].value,
+	Public.food_values["chemical-science-pack"].value,
+	Public.food_values["production-science-pack"].value,
+	Public.food_values["utility-science-pack"].value,
+	Public.food_values["space-science-pack"].value
+}
+
+require 'compatibility.krastorio2'.tables(Public)
 
 return Public

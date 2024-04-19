@@ -2,6 +2,7 @@ local Terrain = require "maps.biter_battles_v2.terrain"
 local Score = require "comfy_panel.score"
 local Tables = require "maps.biter_battles_v2.tables"
 local Blueprint = require 'maps.biter_battles_v2.blueprints'
+local K2 = require 'compatibility.krastorio2'
 
 local Public = {}
 
@@ -168,6 +169,7 @@ function Public.playground_surface()
 		["trees"] = {frequency = global.random_generator(8, 28) * 0.1, size = global.random_generator(6, 14) * 0.1, richness = global.random_generator(2, 4) * 0.1},
 		["enemy-base"] = {frequency = 0, size = 0, richness = 0}
 	}
+	K2.map_gen_settings(map_gen_settings)
 	local surface = game.create_surface(global.bb_surface_name, map_gen_settings)
 	surface.request_to_generate_chunks({x = 0, y = -256}, 7)
 	surface.force_generate_chunk_requests()

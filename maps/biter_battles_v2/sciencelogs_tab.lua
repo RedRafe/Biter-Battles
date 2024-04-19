@@ -20,7 +20,7 @@ local function initialize_dropdown_users_choice()
 end
 
 local function get_science_text(food_name,food_short_name)
-	return table.concat({"[img=item/", food_name, "][color=",food_values[food_name].color, "]", food_short_name, "[/color]"})
+	return table.concat({"[img=item/", food_name, "] [color=",food_values[food_name].color, "]", food_short_name, "[/color]"})
 end
 
 local function add_science_logs(player, element)
@@ -42,7 +42,7 @@ local function add_science_logs(player, element)
 		end
 	end
 	
-	local width_summary_columns = tonumber(94)
+	local width_summary_columns = tonumber(math.floor(658 / #food_long_and_short))
 	local width_summary_first_column = tonumber(110)
 	local column_widths = {width_summary_first_column}
 	for i = 1, #food_long_and_short do

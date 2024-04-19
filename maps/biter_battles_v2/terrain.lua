@@ -10,6 +10,7 @@ local session = require 'utils.datastore.session_data'
 local biter_texture = require "maps.biter_battles_v2.precomputed.biter_texture"
 local river = require "maps.biter_battles_v2.precomputed.river"
 local chunk = require "maps.biter_battles_v2.precomputed.chunk_container"
+local K2 = require 'compatibility.krastorio2'
 
 local spawn_ore = tables.spawn_ore
 local table_insert = table.insert
@@ -366,6 +367,7 @@ local function draw_biter_area(surface, left_top_x, left_top_y)
 
 	surface.set_tiles(out_of_map, false)
 	surface.set_tiles(tiles, true)
+	K2.generate_creep(surface, tiles)
 	
 	for _ = 1, 4, 1 do
 		local v = chunk_tile_vectors[global.random_generator(1, size_of_chunk_tile_vectors)]
