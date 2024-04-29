@@ -3,30 +3,21 @@ local Public = {}
 -- List of forces that will be affected by ammo modifier
 Public.ammo_modified_forces_list = {"north", "south", "spectator"}
 
--- Ammo modifiers via set_ammo_damage_modifier
--- [ammo_category] = value
--- ammo_modifier_dmg = base_damage * base_ammo_modifiers
--- damage = base_damage + ammo_modifier_dmg
-Public.base_ammo_modifiers = {
-	["bullet"] = 0.16,
-	["shotgun-shell"] = 1,
-	["flamethrower"] = -0.6,
-	["landmine"] = -0.9
-}
-
--- turret attack modifier via set_turret_attack_modifier
-Public.base_turret_attack_modifiers = {
-	["flamethrower-turret"] = -0.8,
-	["laser-turret"] = 0.0
-}
-
-Public.upgrade_modifiers = {
-	["flamethrower"] = 0.02,
-	["flamethrower-turret"] = 0.02,
-	["laser-turret"] = 0.3,
-	["shotgun-shell"] = 0.6,
-	["grenade"] = 0.48,
-	["landmine"] = 0.04
+Public.modifiers = {
+  ['ammo-damage'] = {
+    ['bullet']                     = { base =  0.16, upgrade = 0.3 },
+    ['flamethrower']               = { base = -0.6,  upgrade = 0.06 },
+    ['landmine']                   = { base = -0.9,  upgrade = 0.04 },
+    ['shotgun-shell']              = { base =  1,    upgrade = 0.6 },
+  },
+  ['gun-speed'] = {
+    ['grenade']                    = { base =  nil,  upgrade = 0.48 },
+  },
+  ['turret-attack'] = {
+    ['gun-turret']                 = { base =  nil,  upgrade = 0.0 },
+    ['flamethrower-turret']        = { base = -0.8,  upgrade = 0.06 },
+    ['laser-turret']               = { base =  0.5,  upgrade = 0.3 },
+  },
 }
 
 Public.food_values = {

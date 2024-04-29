@@ -17,13 +17,25 @@ local K2 = {}
 
 K2.tables = function(tbl)
   if not enabled() then return end
-  -- tbl.base_turret_attack_modifiers['kr-laser-artillery-turret'] = 0.0
-  -- tbl.base_turret_attack_modifiers['kr-railgun-turret'] = 0.0
-  -- tbl.base_turret_attack_modifiers['kr-rocket-turret'] = 0.0
 
-  -- tbl.upgrade_modifiers['kr-laser-artillery-turret'] = 0.0
-  -- tbl.upgrade_modifiers['kr-railgun-turret'] = 0.0
-  -- tbl.upgrade_modifiers['kr-rocket-turret'] = 0.0
+  local modifiers = {
+    ['ammo-damage'] = {
+      ['anti-material-rifle-ammo']   = { base =  0.16, upgrade = 0.3 },
+      ['heavy-rocket']               = { base =  nil,  upgrade = nil },
+      ['impulse-rifle']              = { base =  nil,  upgrade = nil },
+      ['missiles-for-turrets']       = { base =  nil,  upgrade = nil },
+      ['pistol-ammo']                = { base =  0.16, upgrade = 0.3 },
+      ['railgun-shell']              = { base =  0.16, upgrade = nil },
+      ['rifle-ammo']                 = { base =  0.16, upgrade = 0.3 },
+    },
+    ['gun-speed'] = {},
+    ['turret-attack'] = {},
+  }
+  for t, v in pairs(modifiers) do
+    for cat, m in pairs(v) do
+      tbl.modifiers[t][cat] = m
+    end
+  end
 
   tbl.food_names['basic-tech-card'] = true
   tbl.food_names['matter-tech-card'] = true
@@ -37,7 +49,7 @@ K2.tables = function(tbl)
   tbl.food_values['chemical-science-pack']   = { value = 0.00290, name = 'chemical science',    color = '100, 200, 255' }
   tbl.food_values['production-science-pack'] = { value = 0.00930, name = 'production science',  color = '150,  25, 255' }
   tbl.food_values['utility-science-pack']    = { value = 0.00887, name = 'utility science',     color = '210, 210,  60' }
-  tbl.food_values['space-science-pack']      = { value = 0.20039, name = 'space science',       color = '255, 255, 255' }
+  tbl.food_values['space-science-pack']      = { value = 0.15039, name = 'space science',       color = '255, 255, 255' }
   tbl.food_values['matter-tech-card']        = { value = 0.16484, name = 'matter science',      color = '  8, 143, 143' }
   tbl.food_values['advanced-tech-card']      = { value = 0.31274, name = 'advanced science',    color = '240, 230, 140' }
   tbl.food_values['singularity-tech-card']   = { value = 3.69475, name = 'singularity science', color = '255,  20, 147' }
@@ -193,17 +205,42 @@ K2.map_gen_settings = function(mgs)
   mgs.autoplace_controls['crude-oil']     = { frequency = 8.0, size = 1.600, richness = 0.50 }
   mgs.autoplace_controls['imersite']      = { frequency = 2.2, size = 1.000, richness = 0.75 }
   mgs.autoplace_controls['rare-metals']   = { frequency = 6.0, size = 1.000, richness = 1.00 }
-  mgs.autoplace_controls['mineral-water'] = { frequency = 4.0, size = 1.400, richness = 0.75 }
+  mgs.autoplace_controls['mineral-water'] = { frequency = 6.0, size = 1.400, richness = 0.75 }
+end
+
+K2.reset_force = function(force)
+  if not enabled() then return end
+  force.technologies['atomic-bomb'].enabled = true
+  force.technologies['artillery-shell-range-3'].enabled = false
+  force.technologies['artillery-shell-range-5'].enabled = false
+  force.technologies['artillery-shell-speed-3'].enabled = false
+  force.technologies['artillery-shell-speed-5'].enabled = false
 end
 
 -- ====== EVENTS ======
-local K2_TURRET        = 'kr-laser-artillery-turret'
 local K2_TRANSCEIVER   = 'kr-intergalactic-transceiver'
-local TURRET_RADIUS    = 224
 local TICK_INTERVAL    = 645 + 60 -- ~12s, cutscene duration from K2
 local RESPAWN_COOLDOWN = 60 * 10  -- ~10s, must be less than TICK_INTERVAL
+local K2_TURRETS = {
+  ['kr-laser-artillery-turret'] = 224,
+  ['kr-railgun-turret'] = 50,
+  ['kr-rocket-turret'] = 80,
+}
+local RESTRICTED_RECIPES = {
+  ['anti-material-rifle'] = true,
+  ['antimatter-artillery-shell'] = true,
+  ['antimatter-rocket'] = true,
+  ['artillery-shell'] = true,
+  ['artillery-turret'] = true,
+  ['artillery-wagon-cannon'] = true,
+  ['atomic-bomb'] = true,
+  ['heavy-rocket-launcher'] = true,
+  ['heavy-rocket'] = true,
+  ['kr-advanced-tank'] = true,
+  ['nuclear-artillery-shell'] = true,
+}
 
--- Disable K2 own win condition
+-- Disable K2's own win condition
 Event.on_init(function()
   if not enabled() then return end
   if remote.interfaces[K2_TRANSCEIVER] and remote.interfaces[K2_TRANSCEIVER].set_no_victory then
@@ -211,7 +248,37 @@ Event.on_init(function()
   end
 end)
 
--- Prevents players from building K2 Laser Turrets in range of the other team or in range of biter nests
+-- Prevents players from being stuck in 'ghost' mode if killed during the intergalactic explosion
+-- (a K2 bug: https://github.com/raiguard/Krastorio2/blob/2e9c62c3452796834a329021f7203107d6f60bf4/scripts/intergalactic-transceiver.lua#L266)
+local function validate_players()
+  if not enabled() then return end
+  for _, p in pairs(game.connected_players) do
+    if p.controller_type == defines.controllers.ghost and not p.ticks_to_respawn then
+      if not data.stuck_players[p.index] then
+        data.stuck_players[p.index] = true
+        p.print('You have been queued for respawn', Color.cyan)
+        for _, ally in pairs(p.force.connected_players) do
+          if ally.admin and ally.index ~= p.index then
+            ally.print(p.name .. ' has been queued for respawn', Color.cyan)
+          end
+        end
+      else
+        p.ticks_to_respawn = RESPAWN_COOLDOWN
+        data.stuck_players[p.index] = nil
+      end
+    end
+  end
+end
+
+local function on_player_respawned(event)
+  if not enabled() then return end
+  data.stuck_players[event.player_index] = nil
+end
+
+Event.on_nth_tick(TICK_INTERVAL, validate_players)
+Event.add(defines.events.on_player_respawned, on_player_respawned)
+
+-- Prevents players from building K2 Turrets in range of the other team or in range of biter nests
 local function on_built(event)
   if not enabled() then return end
 
@@ -227,7 +294,8 @@ local function on_built(event)
     ghost = true
   end
 
-  if name ~= K2_TURRET then
+  local radius = K2_TURRETS[name]
+  if not radius then
     return
   end
 
@@ -235,10 +303,10 @@ local function on_built(event)
   local surface = entity.surface
   local position = entity.position
 
-  if math.abs(position.y) < TURRET_RADIUS - 16 then
-    msg = 'Cannot build [entity=' .. K2_TURRET .. '] too close to the river!'
-  elseif surface.count_entities_filtered{ position = position, radius = TURRET_RADIUS, name = { 'biter-spawner', 'spitter-spawner' }, limit = 1 } > 0 then
-    msg = 'Cannot build [entity=' .. K2_TURRET .. '] too close to enemy nests!'
+  if math.abs(position.y) < radius - 16 then
+    msg = 'Cannot build [entity=' .. name .. '] too close to the river!'
+  elseif surface.count_entities_filtered{ position = position, radius = radius, name = { 'biter-spawner', 'spitter-spawner' }, limit = 1 } > 0 then
+    msg = 'Cannot build [entity=' .. name .. '] too close to enemy nests!'
   end
 
   if not msg then
@@ -259,27 +327,20 @@ end
 Event.add(defines.events.on_built_entity, on_built)
 Event.add(defines.events.on_robot_built_entity, on_built)
 
--- Prevents players from being stuck in 'ghost' mode if killed during the intergalactic explosion
--- (a K2 bug: https://github.com/raiguard/Krastorio2/blob/2e9c62c3452796834a329021f7203107d6f60bf4/scripts/intergalactic-transceiver.lua#L266)
-local function validate_players()
-  for _, p in pairs(game.connected_players) do
-    if p.controller_type == defines.controllers.ghost then
-      if not data.stuck_players[p.index] then
-        data.stuck_players[p.index] = true
-        p.print('You have been queued for respawn', Color.cyan)
-        for _, ally in pairs(p.force.connected_players) do
-          if ally.admin and ally.index ~= p.index then
-            ally.print(p.name .. ' has been queued for respawn', Color.cyan)
-          end
-        end
-      else
-        p.ticks_to_respawn = RESPAWN_COOLDOWN
-        data.stuck_players[p.index] = nil
+local function on_research_finished(event)
+  if not enabled() then return end
+  local tech = event.research
+  local force = tech.force
+
+  for _, e in pairs(tech.effects or {}) do
+    if e.type == 'unlock-recipe' then
+      if RESTRICTED_RECIPES[e.recipe] then
+        force.recipes[e.recipe].enabled = false
       end
     end
   end
 end
 
-Event.on_nth_tick(TICK_INTERVAL, validate_players)
+Event.add(defines.events.on_research_finished, on_research_finished)
 
 return K2

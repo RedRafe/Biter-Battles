@@ -12,6 +12,24 @@ local math_round = math.round
 
 local Public = {}
 
+local function get_food_asc()
+	local foods = {}
+	local ts = table_size(tables.food_long_and_short)
+	for i = 1, ts do
+		table.insert(foods, tables.food_long_and_short[i].long_name)
+	end
+	return foods
+end
+
+local function get_food_desc()
+	local foods = {}
+	local ts = table_size(tables.food_long_and_short)
+	for i = ts, 1, -1 do
+		table.insert(foods, tables.food_long_and_short[i].long_name)
+	end
+	return foods
+end
+
 local function update_boss_modifiers(force_name_biter,damage_mod_mult,speed_mod_mult)
 	local damage_mod = math_round((global.bb_evolution[force_name_biter]) * 1.0, 3) * damage_mod_mult
 	local speed_mod = math_round((global.bb_evolution[force_name_biter]) *0.25, 3) * speed_mod_mult
@@ -136,7 +154,7 @@ function Public.add_feeding_stats(player, feeding_force_name, food, flask_amount
 		end
 
 		local indexScience = tables.food_long_to_short[food].indexScience
-		total_science_of_player_force[indexScience] = total_science_of_player_force[indexScience] + flask_amount
+		total_science_of_player_force[indexScience] = (total_science_of_player_force[indexScience] or 0) + flask_amount
 
 		if global.science_logs_text then
 			table.insert(global.science_logs_date,1, formatted_feed_time)
@@ -252,26 +270,7 @@ function Public.feed_biters_mixed_from_inventory(player, button)
 	end
 	local enemy_force_name = get_enemy_team_of(player.force.name)
 	local biter_force_name = enemy_force_name .. "_biters"
-	local food = {
-		"automation-science-pack",
-		"logistic-science-pack",
-		"military-science-pack",
-		"chemical-science-pack",
-		"production-science-pack",
-		"utility-science-pack",
-		"space-science-pack"
-	}
-	if button == defines.mouse_button_type.right then
-		food = {
-			"space-science-pack",
-			"utility-science-pack",
-			"production-science-pack",
-			"chemical-science-pack",
-			"military-science-pack",
-			"logistic-science-pack",
-			"automation-science-pack",
-		}
-	end
+	local food = (button == defines.mouse_button_type.left) and get_food_asc() or get_food_desc()
 	local i = player.get_main_inventory()
 	local colored_player_name = table.concat({"[color=", player.color.r * 0.6 + 0.35, ",", player.color.g * 0.6 + 0.35, ",", player.color.b * 0.6 + 0.35, "]", player.name, "[/color]"})
 	local message = {colored_player_name, " fed "}

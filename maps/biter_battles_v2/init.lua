@@ -1,8 +1,9 @@
 local Terrain = require "maps.biter_battles_v2.terrain"
 local Score = require "comfy_panel.score"
 local Tables = require "maps.biter_battles_v2.tables"
-local Blueprint = require 'maps.biter_battles_v2.blueprints'
-local K2 = require 'compatibility.krastorio2'
+local Blueprint = require "maps.biter_battles_v2.blueprints"
+local Combat = require "maps.biter_battles_v2.combat_balance"
+local K2 = require "compatibility.krastorio2"
 
 local Public = {}
 
@@ -377,7 +378,6 @@ function Public.forces()
 	f.set_friend("player", true)
 	f.set_friend("spectator", true)
 	f.share_chart = false
-	
 
 	local f = game.forces["north_biters_boss"]
 	f.set_friend("south_biters", true)
@@ -417,13 +417,13 @@ function Public.forces()
 	f.share_chart = false
 
 	for _, force in pairs(game.forces) do
-		game.forces[force.name].technologies["artillery"].enabled = false
-		game.forces[force.name].technologies["artillery-shell-range-1"].enabled = false
-		game.forces[force.name].technologies["artillery-shell-speed-1"].enabled = false
-		game.forces[force.name].technologies["atomic-bomb"].enabled = false
-		game.forces[force.name].technologies["cliff-explosives"].enabled = false
-		game.forces[force.name].technologies["land-mine"].enabled = false
-		game.forces[force.name].research_queue_enabled = true
+		force.technologies["artillery"].enabled = false
+		force.technologies["artillery-shell-range-1"].enabled = false
+		force.technologies["artillery-shell-speed-1"].enabled = false
+		force.technologies["atomic-bomb"].enabled = false
+		force.technologies["cliff-explosives"].enabled = false
+		force.technologies["land-mine"].enabled = false
+		force.research_queue_enabled = true
 		global.ai_targets[force.name] = { available = {}, available_list = {} }
 		global.ai_target_destroyed_map = {}
 		global.spy_fish_timeout[force.name] = 0
@@ -431,21 +431,13 @@ function Public.forces()
 		global.reanim_chance[force.index] = 0
 		global.bb_threat_income[force.name] = 0
 		global.bb_threat[force.name] = 0
-	end
-	for _, force in pairs(Tables.ammo_modified_forces_list) do
-		for ammo_category, value in pairs(Tables.base_ammo_modifiers) do
-			game.forces[force]
-				.set_ammo_damage_modifier(ammo_category, value)
-		end
+
+		K2.reset_force(force)
 	end
 
-	for _, force in pairs(Tables.ammo_modified_forces_list) do
-		for turret_category, value in pairs(Tables.base_turret_attack_modifiers) do
-			game.forces[force]
-				.set_turret_attack_modifier(turret_category, value)
-		end
+	for _, force_name in pairs(Tables.ammo_modified_forces_list) do
+		Combat.init_force(game.forces[force_name])
 	end
-
 end
 
 return Public

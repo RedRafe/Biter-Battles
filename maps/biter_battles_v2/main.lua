@@ -16,6 +16,7 @@ local Terrain = require "maps.biter_battles_v2.terrain"
 local Session = require 'utils.datastore.session_data'
 local Server = require 'utils.server'
 local Color = require 'utils.color_presets'
+local Combat = require "maps.biter_battles_v2.combat_balance"
 local autoTagWestOutpost = "[West]"
 local autoTagEastOutpost = "[East]"
 local autoTagDistance = 600
@@ -49,7 +50,7 @@ local function on_gui_click(event)
 end
 
 local function on_research_finished(event)
-	Functions.combat_balance(event)
+	Combat.override_force_modifiers(event)
 	
 	local name = event.research.name
 	local force = event.research.force
