@@ -305,7 +305,7 @@ local function on_built(event)
 
   if math.abs(position.y) < radius - 16 then
     msg = 'Cannot build [entity=' .. name .. '] too close to the river!'
-  elseif surface.count_entities_filtered{ position = position, radius = radius, name = { 'biter-spawner', 'spitter-spawner' }, limit = 1 } > 0 then
+  elseif surface.count_entities_filtered{ position = position, radius = radius, type = 'unit-spawner', limit = 1 } > 0 then
     msg = 'Cannot build [entity=' .. name .. '] too close to enemy nests!'
   end
 

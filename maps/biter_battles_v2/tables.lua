@@ -1,3 +1,6 @@
+local K2 = require 'compatibility.krastorio2'
+local ArmouredBiters = require 'compatibility.armoured_biters'
+
 local Public = {}
 
 -- List of forces that will be affected by ammo modifier
@@ -44,6 +47,48 @@ Public.force_translation = {
 Public.enemy_team_of = {
 	["north"] = "south",
 	["south"] = "north"
+}
+
+Public.units = {
+	'small-biter', 'small-spitter',
+	'medium-biter', 'medium-spitter',
+	'big-biter', 'big-spitter',
+	'behemoth-biter', 'behemoth-spitter',
+}
+Public.spawners = { 'biter-spawner', 'spitter-spawner' }
+
+Public.threat_values = {
+	["small-spitter"]        = 1.5,
+	["small-biter"]          = 1.5,
+	["medium-spitter"]       = 4.5,
+	["medium-biter"]         = 4.5,
+	["big-spitter"]          = 13,
+	["big-biter"]            = 13,
+	["behemoth-spitter"]     = 38.5,
+	["behemoth-biter"]       = 38.5,
+	["small-worm-turret"]    = 8,
+	["medium-worm-turret"]   = 16,
+	["big-worm-turret"]      = 24,
+	["behemoth-worm-turret"] = 32,
+	["biter-spawner"]        = 32,
+	["spitter-spawner"]      = 32,
+}
+
+Public.entity_score_values = {
+	['small-biter']          =   6,
+	['small-spitter']        =   6,
+	['medium-biter']         =  18,
+	['medium-spitter']       =  18,
+	['big-biter']            =  52,
+	['big-spitter']          =  52,
+	['behemoth-biter']       = 154,
+	['behemoth-spitter']     = 154,
+	['small-worm-turret']    =  32,
+	['medium-worm-turret']   =  64,
+	['big-worm-turret']      =  96,
+	['behemoth-worm-turret'] = 128,
+	['biter-spawner']        = 128,
+	['spitter-spawner']      = 128,
 }
 
 Public.wait_messages = {
@@ -197,6 +242,7 @@ Public.food_value_table_version = {
 	Public.food_values["space-science-pack"].value
 }
 
-require 'compatibility.krastorio2'.tables(Public)
+K2.tables(Public)
+ArmouredBiters.tables(Public)
 
 return Public

@@ -1,3 +1,5 @@
+local ArmouredBiters = require 'compatibility.armoured_biters'
+
 local Public = {}
 local math_random = math.random
 local math_floor = math.floor
@@ -81,9 +83,12 @@ local function get_worm_name(evolution_factor)
 end
 
 local function get_unit_name(evolution_factor)
-	if math_random(1, 3) == 1 then
+	local chance = math_random(1, 3)
+	if chance == 1 then
 		return get_spitter_name(evolution_factor)
-	else
+	elseif chance == 2 and ArmouredBiters.enabled() then
+		return ArmouredBiters.get_biter_name(evolution_factor)
+	else 
 		return get_biter_name(evolution_factor)
 	end
 end

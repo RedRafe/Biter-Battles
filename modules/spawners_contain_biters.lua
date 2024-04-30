@@ -1,6 +1,7 @@
 -- spawners release biters on death -- by mewmew
 
 local event = require 'utils.event'
+local ArmouredBiters = require 'compatibility.armoured_biters'
 local math_random = math.random
 
 local biter_building_inhabitants = {
@@ -15,6 +16,7 @@ local biter_building_inhabitants = {
 	[9] = {{"medium-biter",2,3},{"big-biter",7,9}},
 	[10] = {{"big-biter",4,8},{"behemoth-biter",3,4}}
 }
+ArmouredBiters.biter_building_inhabitants(biter_building_inhabitants)
 
 local function on_entity_died(event)	
 	if not event.entity.valid then return end

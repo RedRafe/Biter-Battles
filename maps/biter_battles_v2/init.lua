@@ -3,7 +3,8 @@ local Score = require "comfy_panel.score"
 local Tables = require "maps.biter_battles_v2.tables"
 local Blueprint = require "maps.biter_battles_v2.blueprints"
 local Combat = require "maps.biter_battles_v2.combat_balance"
-local K2 = require "compatibility.krastorio2"
+local K2 = require 'compatibility.krastorio2'
+local ArmouredBiters = require 'compatibility.armoured_biters'
 
 local Public = {}
 
@@ -278,24 +279,18 @@ function Public.tables()
 	global.max_group_size = {}
 	global.max_group_size["north_biters"] = 300							--Maximum unit group size for north biters.
 	global.max_group_size["south_biters"] = 300							--Maximum unit group size for south biters.
-	global.biter_spawn_unseen = {
-		["north"] = {
-			["medium-spitter"] = true, ["medium-biter"] = true, ["big-spitter"] = true, ["big-biter"] = true, ["behemoth-spitter"] = true, ["behemoth-biter"] = true
-		},
-		["south"] = {
-			["medium-spitter"] = true, ["medium-biter"] = true, ["big-spitter"] = true, ["big-biter"] = true, ["behemoth-spitter"] = true, ["behemoth-biter"] = true
-		},
-		["north_biters_boss"] = {
-			["medium-spitter"] = true, ["medium-biter"] = true, ["big-spitter"] = true, ["big-biter"] = true, ["behemoth-spitter"] = true, ["behemoth-biter"] = true
-		},
-		["south_biters_boss"] = {
-			["medium-spitter"] = true, ["medium-biter"] = true, ["big-spitter"] = true, ["big-biter"] = true, ["behemoth-spitter"] = true, ["behemoth-biter"] = true
-		}
-	}
 	global.difficulty_vote_value = 0.75
 	global.difficulty_vote_index = 3
 
 	global.difficulty_votes_timeout = 36000
+
+	global.biter_spawn_unseen = {}
+	for _, faction in pairs({"north", "north_biters_boss", "south", "south_biters_boss"}) do
+		global.biter_spawn_unseen[faction] = {}
+		for _, unit_name in pairs(Tables.units) do
+			global.biter_spawn_unseen[faction][unit_name] = true
+		end
+	end
 
 	-- Maximum evolution threshold after which biters have 100% chance
 	-- to reanimate. The reanimation starts after evolution factor reaches

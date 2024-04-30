@@ -3,6 +3,8 @@
 local Event = require 'utils.event'
 local Global = require 'utils.global'
 local Tabs = require 'comfy_panel.main'
+local Tables = require 'maps.biter_battles_v2.tables'
+local ArmouredBiters = require 'compatibility.armoured_biters'
 
 local Public = {}
 local this = {
@@ -82,16 +84,8 @@ local function get_sorted_list(method, column_name, score_list)
     return score_list
 end
 
-local biters = {
-    'small-biter',
-    'medium-biter',
-    'big-biter',
-    'behemoth-biter',
-    'small-spitter',
-    'medium-spitter',
-    'big-spitter',
-    'behemoth-spitter'
-}
+local biters = Tables.units
+
 local function get_total_biter_killcount(force)
     local count = 0
     for _, biter in pairs(biters) do
@@ -316,22 +310,7 @@ local function on_rocket_launched(event)
     refresh_score_full()
 end
 
-local entity_score_values = {
-    ['small-biter'] = 6,
-    ['small-spitter'] = 6,
-    ['medium-biter'] = 18,
-    ['medium-spitter'] = 18,
-    ['big-biter'] = 52,
-    ['big-spitter'] = 52,
-    ['behemoth-biter'] = 154,
-    ['behemoth-spitter'] = 154,
-    ['small-worm-turret'] = 32,
-    ['medium-worm-turret'] = 64,
-    ['big-worm-turret'] = 96,
-    ['behemoth-worm-turret'] = 128,
-    ['biter-spawner'] = 128,
-    ['spitter-spawner'] = 128,
-}
+local entity_score_values = Tables.entity_score_values
 
 local function train_type_cause(event)
     local players = {}

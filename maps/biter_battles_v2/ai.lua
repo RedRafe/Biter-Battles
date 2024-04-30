@@ -8,28 +8,14 @@ local Functions = require "maps.biter_battles_v2.functions"
 local Tables = require "maps.biter_battles_v2.tables"
 local AiStrikes = require "maps.biter_battles_v2.ai_strikes"
 local AiTargets = require "maps.biter_battles_v2.ai_targets"
+local ArmouredBiters = require 'compatibility.armoured_biters'
 local math_random = math.random
 local math_floor = math.floor
 
 local unit_type_raffle = {"biter", "mixed", "mixed", "spitter", "spitter"}
 local size_of_unit_type_raffle = #unit_type_raffle
 
-local threat_values = {
-	["small-spitter"] = 1.5,
-	["small-biter"] = 1.5,
-	["medium-spitter"] = 4.5,
-	["medium-biter"] = 4.5,
-	["big-spitter"] = 13,
-	["big-biter"] = 13,
-	["behemoth-spitter"] = 38.5,
-	["behemoth-biter"] = 38.5,
-	["small-worm-turret"] = 8,
-	["medium-worm-turret"] = 16,
-	["big-worm-turret"] = 24,
-	["behemoth-worm-turret"] = 32,
-	["biter-spawner"] = 32,
-	["spitter-spawner"] = 32
-}
+local threat_values = Tables.threat_values
 
 local function get_threat_ratio(biter_force_name)
 	if global.bb_threat[biter_force_name] <= 0 then return 0 end
