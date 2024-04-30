@@ -48,10 +48,6 @@ ArmouredBiters.biter_building_inhabitants = function(tbl)
   table.insert(tbl[10], {'behemoth-armoured-biter', 1, 2})  
 end
 
-ArmouredBiters.get_spawner_name = function(spawner_name)
-  return enabled() and 'armoured-biter-spawner' or spawner_name
-end
-
 ArmouredBiters.get_biter_name = function(evo)
   if evo < 0.30 then return units[1] end
   if evo < 0.55 then return units[2] end

@@ -5,7 +5,7 @@ local bb_config = require "maps.biter_battles_v2.config"
 local Functions = require "maps.biter_battles_v2.functions"
 local mixed_ore_map = require "maps.biter_battles_v2.mixed_ore_map"
 local AiTargets = require "maps.biter_battles_v2.ai_targets"
-local tables = require "maps.biter_battles_v2.tables"
+local Tables = require "maps.biter_battles_v2.tables"
 local session = require 'utils.datastore.session_data'
 local biter_texture = require "maps.biter_battles_v2.precomputed.biter_texture"
 local river = require "maps.biter_battles_v2.precomputed.river"
@@ -13,7 +13,7 @@ local chunk = require "maps.biter_battles_v2.precomputed.chunk_container"
 local K2 = require 'compatibility.krastorio2'
 local ArmouredBiters = require 'compatibility.armoured_biters'
 
-local spawn_ore = tables.spawn_ore
+local spawn_ore = Tables.spawn_ore
 local table_insert = table.insert
 local math_floor = math.floor
 local math_abs = math.abs
@@ -375,11 +375,9 @@ local function draw_biter_area(surface, left_top_x, left_top_y)
 		local position = {x = left_top_x + v[1], y = left_top_y + v[2]}
 		if Functions.is_biter_area(position,true) and surface.can_place_entity({name = "spitter-spawner", position = position}) then
 			local spawner_name = "biter-spawner"
-			local chance = global.random_generator(1, 4)
-			if chance == 1 then
-				spawner_name = "spitter-spawner"
-			elseif chance == 2 then
-				spawner_name = ArmouredBiters.get_spawner_name(spawner_name)
+			local chance = global.random_generator(0, #Tables.spawners)
+			if chance > 0 then
+				spawner_name = Tables.spawners[chance]
 			end
 			local e = surface.create_entity({name = spawner_name, position = position, force = "north_biters"})
 			table.insert(global.unit_spawners[e.force.name], e)
