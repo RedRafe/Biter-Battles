@@ -32,12 +32,9 @@ ArmouredBiters.tables = function(tbl)
   tbl.threat_values['leviathan-armoured-biter'] = 346.5
   tbl.threat_values['armoured-biter-spawner']   =  32
 
-  tbl.entity_score_values['small-armoured-biter']     =   20
-  tbl.entity_score_values['medium-armoured-biter']    =   48
-  tbl.entity_score_values['big-armoured-biter']       =  108
-  tbl.entity_score_values['behemoth-armoured-biter']  =  384
-  tbl.entity_score_values['leviathan-armoured-biter'] = 1386
-  tbl.entity_score_values['armoured-biter-spawner']   =  128
+  for k, v in pairs(tbl.threat_values) do
+    tbl.entity_score_values[k] = 4 * v
+  end
 end
 
 ArmouredBiters.biter_building_inhabitants = function(tbl)
@@ -49,11 +46,11 @@ ArmouredBiters.biter_building_inhabitants = function(tbl)
 end
 
 ArmouredBiters.get_biter_name = function(evo)
-  if evo < 0.30 then return units[1] end
-  if evo < 0.55 then return units[2] end
-  if evo < 0.95 then return units[3] end
-  if evo < 1.65 then return units[4] end
-  return units[5]
+  if evo < 0.30 then return 'small-armoured-biter' end
+  if evo < 0.55 then return 'medium-armoured-biter' end
+  if evo < 0.95 then return 'big-armoured-biter' end
+  if evo < 1.65 then return 'behemoth-armoured-biter' end
+  return 'leviathan-armoured-biter'
 end
 
 return ArmouredBiters
